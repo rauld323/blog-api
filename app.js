@@ -1,11 +1,14 @@
 const express = require('express');
 const app = express();
 const morgan = require('morgan');
+const bodyParser = require('body-parser');
 
 const blogRoutes = require('./api/routes/blogs');
 const formRoutes = require('./api/routes/form');
 
 app.use(morgan('dev'));
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 
 // This routes hand requests
 app.use('/blogs', blogRoutes);
