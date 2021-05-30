@@ -1,19 +1,24 @@
 {
-  "name": "alien-blog-node",
-  "version": "1.0.0",
-  "description": "A RESTful API for an alien blog ",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [
-    "node",
-    "javascript",
-    "api"
-  ],
-  "author": "Raul Davila Campos",
-  "license": "ISC",
-  "dependencies": {
-    "express": "^4.17.1"
-  }
+	"name": "alien-blog-node",
+	"version": "1.0.0",
+	"description": "A RESTful API for an alien blog ",
+	"main": "index.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"start": "nodemon server.js"
+	},
+	"keywords": [
+		"node",
+		"javascript",
+		"api"
+	],
+	"author": "Raul Davila Campos",
+	"license": "ISC",
+	"dependencies": {
+		"express": "^4.17.1",
+		"morgan": "^1.10.0"
+	},
+	"devDependencies": {
+		"nodemon": "^2.0.7"
+	}
 }
