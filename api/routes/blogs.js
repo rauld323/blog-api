@@ -11,10 +11,19 @@ router.get('/', (req, res, next) => {
 		.exec()
 		.then(docs => {
 			console.log(docs);
+			//   if (docs.length >= 0) {
 			res.status(200).json(docs);
+			// } else {
+			// 	res.status(404).json({
+			// 		message: 'Blog is not found'
+			// 	});
+			// }
 		})
 		.catch(err => {
-			res.status(500).json({ error: err });
+			console.log(err);
+			res.status(500).json({
+				error: err
+			});
 		});
 });
 
@@ -49,7 +58,7 @@ router.get('/:blogId', (req, res, next) => {
 	Blog.findById(id)
 		.exec()
 		.then(doc => {
-			console.log(doc);
+			console.log('Comes from ', doc);
 			if (doc) {
 				res.status(200).json(doc);
 			} else {
@@ -67,16 +76,39 @@ router.get('/:blogId', (req, res, next) => {
 
 //Updates a blog post
 router.patch('/:blogId', (req, res, next) => {
-	res.status(200).json({
-		message: 'Updated Blog'
-	});
+	const id = req.params.blogId;
+	const updateOps = {};
+	for (const ops of req.body) {
+		updateOps[ops.propName] = ops.value;
+	}
+	Blog.update({ _id: id }, { $set: updateOps })
+		.exec()
+		.then(result => {
+			console.log(result);
+			res.status(200).json(result);
+		})
+		.catch(err => {
+			console.log(err);
+			res.status(500).json({
+				error: err
+			});
+		});
 });
 
 //Deletes a Blog
 router.delete('/:blogId', (req, res, next) => {
-	res.status(200).json({
-		message: 'Deleted Blog'
-	});
+	const id = req.params.blogId;
+	Blog.remove({ _id: id })
+		.exec()
+		.then(result => {
+			res.status(200).json(result);
+		})
+		.catch(err => {
+			console.log(err);
+			res.status(500).json({
+				error: err
+			});
+		});
 });
 
 module.exports = router;

@@ -12,7 +12,8 @@ mongoose.connect(
 		process.env.MONGO_ATLAS +
 		'@cluster0.0nzvu.mongodb.net/myFirstDatabase?retryWrites=true&w=majority',
 	{
-		useMongoClient: true
+		useNewUrlParser: true,
+		useUnifiedTopology: true
 	}
 );
 
