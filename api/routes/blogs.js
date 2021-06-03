@@ -8,11 +8,31 @@ const Blog = require('../models/blog');
 // Gets Blogs
 router.get('/', (req, res, next) => {
 	Blog.find()
+		.select('name content author _id ')
 		.exec()
+		//This gives the user more info as to what kind of request it is and the URL the blog can be found in.
 		.then(docs => {
-			console.log(docs);
+			const response = {
+				coun: docs.length,
+				blogs: docs.map(doc => {
+					return {
+						name: doc.name,
+						content:
+							doc.content,
+						author: doc.author,
+						_id: doc._id,
+						request: {
+							type:
+								'GET',
+							url:
+								'http://localhost:8000/blogs/' +
+								doc._id
+						}
+					};
+				})
+			};
 			//   if (docs.length >= 0) {
-			res.status(200).json(docs);
+			res.status(200).json(response);
 			// } else {
 			// 	res.status(404).json({
 			// 		message: 'Blog is not found'
@@ -39,9 +59,19 @@ router.post('/', (req, res, next) => {
 		.then(result => {
 			console.log(result);
 			res.status(201).json({
-				message:
-					'Handling POST requests to /blogs',
-				createdBlog: result
+				message: 'Blog has been created!',
+				createdBlog: {
+					name: result.name,
+					content: result.content,
+					author: result.author,
+					_id: result._id,
+					request: {
+						type: 'GET',
+						ulr:
+							'http://localhost:8000/blogs/' +
+							result._id
+					}
+				}
 			});
 		})
 		.catch(err => {
