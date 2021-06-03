@@ -86,11 +86,19 @@ router.post('/', (req, res, next) => {
 router.get('/:blogId', (req, res, next) => {
 	const id = req.params.blogId;
 	Blog.findById(id)
+		.select('name content author _id ')
 		.exec()
 		.then(doc => {
 			console.log('Comes from ', doc);
 			if (doc) {
-				res.status(200).json(doc);
+				res.status(200).json({
+					blog: doc,
+					request: {
+						type: 'GET',
+						description:
+							'http://localhost:8000/blogs/'
+					}
+				});
 			} else {
 				res.status(404).json({
 					message:
@@ -114,8 +122,15 @@ router.patch('/:blogId', (req, res, next) => {
 	Blog.update({ _id: id }, { $set: updateOps })
 		.exec()
 		.then(result => {
-			console.log(result);
-			res.status(200).json(result);
+			res.status(200).json({
+				message: 'Blog has been changed',
+				request: {
+					type: 'GET',
+					url:
+						'http://localhost:8000/blogs/' +
+						id
+				}
+			});
 		})
 		.catch(err => {
 			console.log(err);
@@ -131,7 +146,19 @@ router.delete('/:blogId', (req, res, next) => {
 	Blog.remove({ _id: id })
 		.exec()
 		.then(result => {
-			res.status(200).json(result);
+			res.status(200).json({
+				message: 'Blog has been deleted',
+				request: {
+					type: 'POST',
+					url:
+						'http://localhost:8000/blogs/',
+					body: {
+						name: 'String',
+						content: 'String',
+						author: 'String'
+					}
+				}
+			});
 		})
 		.catch(err => {
 			console.log(err);
