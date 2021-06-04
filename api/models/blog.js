@@ -2,9 +2,9 @@ const mongoose = require('mongoose');
 
 const blogSchema = mongoose.Schema({
 	_id: mongoose.Schema.Types.ObjectId,
-	name: { type: String, require: true },
-	content: { type: String, require: true },
-	author: { type: String, require: true }
+	name: { type: String, required: true },
+	content: { type: String, required: true },
+	author: { type: String, required: true }
 });
 
 module.exports = mongoose.model('Blog', blogSchema);
