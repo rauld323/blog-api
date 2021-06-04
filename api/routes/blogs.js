@@ -1,6 +1,33 @@
 const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
+const multer = require('multer');
+
+const storage = multer.diskStorage({
+	destination: function(req, file, cb) {
+		cb(null, './uploads/');
+	},
+	filename: function(req, file, cb) {
+		cb(null, new Date().toISOString() + file.originalname);
+	}
+});
+
+const fileFilter = (req, file, cb) => {
+	// reject a file
+	if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png') {
+		cb(null, true);
+	} else {
+		cb(null, false);
+	}
+};
+
+const upload = multer({
+	storage: storage,
+	limits: {
+		fileSize: 1024 * 1024 * 5
+	},
+	fileFilter: fileFilter
+});
 
 //Calls module from blog schema
 const Blog = require('../models/blog');
@@ -8,18 +35,20 @@ const Blog = require('../models/blog');
 // Gets Blogs
 router.get('/', (req, res, next) => {
 	Blog.find()
-		.select('name content author _id ')
+		.select('name content author _id blogImage')
 		.exec()
 		//This gives the user more info as to what kind of request it is and the URL the blog can be found in.
 		.then(docs => {
 			const response = {
-				coun: docs.length,
+				count: docs.length,
 				blogs: docs.map(doc => {
 					return {
 						name: doc.name,
 						content:
 							doc.content,
 						author: doc.author,
+						blogImage:
+							doc.blogImage,
 						_id: doc._id,
 						request: {
 							type:
@@ -48,12 +77,13 @@ router.get('/', (req, res, next) => {
 });
 
 // Creates a Blog
-router.post('/', (req, res, next) => {
+router.post('/', upload.single('blogImage'), (req, res, next) => {
 	const blog = new Blog({
 		_id: new mongoose.Types.ObjectId(),
 		name: req.body.name,
 		content: req.body.content,
-		author: req.body.author
+		author: req.body.author,
+		blogImage: req.file.path
 	});
 	blog.save()
 		.then(result => {
@@ -86,7 +116,7 @@ router.post('/', (req, res, next) => {
 router.get('/:blogId', (req, res, next) => {
 	const id = req.params.blogId;
 	Blog.findById(id)
-		.select('name content author _id ')
+		.select('name content author _id blogImage')
 		.exec()
 		.then(doc => {
 			console.log('Comes from ', doc);
