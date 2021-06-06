@@ -6,6 +6,7 @@ const mongoose = require('mongoose');
 
 const blogRoutes = require('./api/routes/blogs');
 const formRoutes = require('./api/routes/form');
+const userRoutes = require('./api/routes/user');
 
 mongoose.connect(
 	'mongodb+srv://alien-blog:' +
@@ -44,6 +45,7 @@ app.use((res, req, next) => {
 // This routes hand requests
 app.use('/blogs', blogRoutes);
 app.use('/form', formRoutes);
+app.use('/user', userRoutes);
 
 // If user does not choose one of the two routers throw error
 app.use((req, res, next) => {
