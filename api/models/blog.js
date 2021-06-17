@@ -5,7 +5,7 @@ const blogSchema = mongoose.Schema({
 	name: { type: String, required: true },
 	content: { type: String, required: true },
 	author: { type: String, required: true },
-	blogImage: { type: String, required: true }
+	blogImage: { type: String, required: false }
 });
 
 module.exports = mongoose.model('Blog', blogSchema);
