@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
 const multer = require('multer');
+// const checkAuth = require('../middleware/check-auth');
 
 const storage = multer.diskStorage({
 	destination: function(req, file, cb) {
@@ -35,7 +36,7 @@ const Blog = require('../models/blog');
 // Gets Blogs
 router.get('/', (req, res, next) => {
 	Blog.find()
-		.select('name content author _id blogImage')
+		.select('firstname content author _id blogImage')
 		.exec()
 		//This gives the user more info as to what kind of request it is and the URL the blog can be found in.
 		.then(docs => {
@@ -43,7 +44,8 @@ router.get('/', (req, res, next) => {
 				count: docs.length,
 				blogs: docs.map(doc => {
 					return {
-						name: doc.name,
+						firstname:
+							doc.firstname,
 						content:
 							doc.content,
 						author: doc.author,
@@ -80,7 +82,7 @@ router.get('/', (req, res, next) => {
 router.post('/', upload.single('blogImage'), (req, res, next) => {
 	const blog = new Blog({
 		_id: new mongoose.Types.ObjectId(),
-		name: req.body.name,
+		firstname: req.body.firstname,
 		content: req.body.content,
 		author: req.body.author,
 		blogImage: req.file.path
@@ -91,14 +93,14 @@ router.post('/', upload.single('blogImage'), (req, res, next) => {
 			res.status(201).json({
 				message: 'Blog has been created!',
 				createdBlog: {
-					name: result.name,
+					firstname: result.firstname,
 					content: result.content,
 					author: result.author,
 					_id: result._id,
 					request: {
 						type: 'GET',
-						ulr:
-							'http://localhost:8000/blogs/' +
+						url:
+							'http://localhost:8000/blogs' +
 							result._id
 					}
 				}
@@ -116,7 +118,7 @@ router.post('/', upload.single('blogImage'), (req, res, next) => {
 router.get('/:blogId', (req, res, next) => {
 	const id = req.params.blogId;
 	Blog.findById(id)
-		.select('name content author _id blogImage')
+		.select('firstname content author _id blogImage')
 		.exec()
 		.then(doc => {
 			console.log('Comes from ', doc);
@@ -183,7 +185,7 @@ router.delete('/:blogId', (req, res, next) => {
 					url:
 						'http://localhost:8000/blogs/',
 					body: {
-						name: 'String',
+						firstname: 'String',
 						content: 'String',
 						author: 'String'
 					}
